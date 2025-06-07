@@ -1,5 +1,5 @@
 name: Deploy gha-testing
-run-name: Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }} to ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/master' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }} - ${{ github.sha }} by @${{ github.actor }}
+run-name: Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }} to ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }} - ${{ github.sha }} by @${{ github.actor }}
 
 on:
   push:
@@ -25,7 +25,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/master' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }}
+    environment: ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }}
     steps:
       # checkout branch
       - uses: actions/checkout@master
