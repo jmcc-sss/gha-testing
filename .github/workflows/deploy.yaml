@@ -3,15 +3,15 @@ run-name: >
   Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }} 
   to ${{ inputs.environment != '' && inputs.environment || (
     github.ref_name == 'main'    && 'production' || 
-    github.ref_name == 'staging' && 'staging'    ||
-    github.ref_name == 'dev'     && 'dev'        || 'dev'
+    github.ref_name == 'staging' && 'staging'    || 'dev'
   ) }} - ${{ github.sha }} by @${{ github.actor }}
 
 on:
   push:
     branches:
-      - staging
       - main
+      - staging
+      - dev
   workflow_dispatch:
     inputs:
       branch_name:
@@ -31,12 +31,11 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # input.environment || main branch uses production env || staging branch uses staging env
+    # input.environment || main branch uses production env || staging branch uses staging env || defaults to dev
     environment: >
       ${{ inputs.environment != '' && inputs.environment || (
         github.ref_name == 'main'    && 'production' || 
-        github.ref_name == 'staging' && 'staging'    || 
-        github.ref_name == 'dev'     && 'dev'        || 'dev'
+        github.ref_name == 'staging' && 'staging'    || 'dev'
       ) }}
     steps:
       # checkout branch
