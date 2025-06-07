@@ -25,11 +25,13 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # input.environment || main branch uses production env || staging branch uses staging env
     environment: ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/main' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }}
     steps:
       # checkout branch
       - uses: actions/checkout@master
         with:
+          # branch from inputs || on.push.branch.ref_name
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }}
           fetch-depth: 0
 
