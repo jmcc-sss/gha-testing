@@ -1,3 +1,3 @@
 # gha-testing
 
-repo for gha testing - staging
+repo for gha testing
