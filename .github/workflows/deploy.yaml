@@ -1,0 +1,43 @@
+name: Deploy gha-testing
+run-name: Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }} to ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/master' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }} - ${{ github.sha }} by @${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - staging
+      - main
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: branch_name
+        required: true
+        type: string
+      environment:
+        description: Target environment
+        required: true
+        default: dev
+        type: environment
+
+# Environment variables available to all jobs and steps in this workflow
+env:
+  CHECK: "mark"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment != '' && inputs.environment || (github.ref == 'refs/heads/master' && 'production' || (github.ref == 'refs/heads/staging' && 'staging' || 'dev')) }}
+    steps:
+      # checkout branch
+      - uses: actions/checkout@master
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }}
+          fetch-depth: 0
+
+      # test env variables
+      - name: TEST
+        env:
+          TEST: ${{ vars.TEST }}
+          CHECK: ${{ env.CHECK }}
+        run: |
+          echo "test variable: $TEST"
+          echo "check variable: $CHECK"
