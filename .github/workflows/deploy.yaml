@@ -1,55 +1,55 @@
-name: Deploy gha-testing
-run-name: >
-  Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }} 
-  to ${{ inputs.environment != '' && inputs.environment || (
-    github.ref_name == 'main'    && 'production' || 
-    github.ref_name == 'staging' && 'staging'    || 'dev'
-  ) }} - ${{ github.sha }} by @${{ github.actor }}
+# name: Deploy gha-testing
+# run-name: >
+#   Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }} 
+#   to ${{ inputs.environment != '' && inputs.environment || (
+#     github.ref_name == 'main'    && 'production' || 
+#     github.ref_name == 'staging' && 'staging'    || 'dev'
+#   ) }} - ${{ github.sha }} by @${{ github.actor }}
 
-on:
-  push:
-    branches:
-      - main
-      - staging
-      - dev
-  workflow_dispatch:
-    inputs:
-      branch_name:
-        description: branch_name
-        required: true
-        type: string
-      environment:
-        description: Target environment
-        required: true
-        default: dev
-        type: environment
+# on:
+#   push:
+#     branches:
+#       - main
+#       - staging
+#       - dev
+#   workflow_dispatch:
+#     inputs:
+#       branch_name:
+#         description: branch_name
+#         required: true
+#         type: string
+#       environment:
+#         description: Target environment
+#         required: true
+#         default: dev
+#         type: environment
 
-# Environment variables available to all jobs and steps in this workflow
-env:
-  CHECK: "mark"
+# # Environment variables available to all jobs and steps in this workflow
+# env:
+#   CHECK: "mark"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    # input.environment || main branch uses production env || staging branch uses staging env || defaults to dev
-    environment: >
-      ${{ inputs.environment != '' && inputs.environment || (
-        github.ref_name == 'main'    && 'production' || 
-        github.ref_name == 'staging' && 'staging'    || 'dev'
-      ) }}
-    steps:
-      # checkout branch
-      - uses: actions/checkout@master
-        with:
-          # branch from inputs || on.push.branch.ref_name
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }}
-          fetch-depth: 0
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     # input.environment || main branch uses production env || staging branch uses staging env || defaults to dev
+#     environment: >
+#       ${{ inputs.environment != '' && inputs.environment || (
+#         github.ref_name == 'main'    && 'production' || 
+#         github.ref_name == 'staging' && 'staging'    || 'dev'
+#       ) }}
+#     steps:
+#       # checkout branch
+#       - uses: actions/checkout@master
+#         with:
+#           # branch from inputs || on.push.branch.ref_name
+#           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }}
+#           fetch-depth: 0
 
-      # test env variables
-      - name: TEST
-        env:
-          TEST: ${{ vars.TEST }}
-          CHECK: ${{ env.CHECK }}
-        run: |
-          echo "test variable: $TEST"
-          echo "check variable: $CHECK"
+#       # test env variables
+#       - name: TEST
+#         env:
+#           TEST: ${{ vars.TEST }}
+#           CHECK: ${{ env.CHECK }}
+#         run: |
+#           echo "test variable: $TEST"
+#           echo "check variable: $CHECK"
